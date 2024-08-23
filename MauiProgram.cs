@@ -1,0 +1,50 @@
+﻿using MeonMark.Repositories.Implementation;
+using MeonMark.Repositories.Interface;
+using Microsoft.Extensions.Logging;
+
+namespace MeonMark
+{
+    public static class MauiProgram
+    {
+        public static MauiApp CreateMauiApp()
+        {
+            var builder = MauiApp.CreateBuilder();
+            builder
+                .UseMauiApp<App>()
+                .ConfigureFonts(fonts =>
+                {
+                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                })
+                .RegisterServices()
+                .RegisterViewModels()
+                .RegisterViews();
+
+#if DEBUG
+    		builder.Logging.AddDebug();
+#endif
+
+            return builder.Build();
+        }
+
+        public static MauiAppBuilder RegisterServices(this MauiAppBuilder mauiAppBuilder)
+        {
+            mauiAppBuilder.Services.AddSingleton<ITodoItemRepository, TodoItemSQLiteRepository>();
+            return mauiAppBuilder;
+        }
+
+        public static MauiAppBuilder RegisterViewModels(this MauiAppBuilder mauiAppBuilder)
+        {
+            mauiAppBuilder.Services.AddTransient<ViewModels.MainViewModel>();
+            //mauiAppBuilder.Services.AddTransient<ViewModels.ItemViewModel>();
+            return mauiAppBuilder;
+        }
+
+        public static MauiAppBuilder RegisterViews(this MauiAppBuilder mauiAppBuilder)
+        {
+            mauiAppBuilder.Services.AddTransient<Views.MainView>();
+            //mauiAppBuilder.Services.AddTransient<Views.ItemView>();
+            return mauiAppBuilder;
+        }
+    }
+}
